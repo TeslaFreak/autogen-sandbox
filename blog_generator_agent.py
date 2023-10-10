@@ -19,9 +19,12 @@ load_dotenv()
 config_list = config_list_from_json(env_or_file="OAI_CONFIG_LIST")
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
+# Set blog topic and article request
+blog_topic = "tech"
+blog_request = "write a blog about the latest devices coming from samsung"
+
+
 # Define research function
-
-
 def search(query):
     url = "https://google.serper.dev/search"
 
@@ -55,7 +58,7 @@ def scrape(url: str):
 
     # Send the POST request
     response = requests.post(
-        "https://chrome.browserless.io/content?token=2db344e9-a08a-4179-8f48-195a2f7ea6ee",
+        f'https://chrome.browserless.io/content?token={os.getenv("BROWSERLESS_API_KEY")}',
         headers=headers,
         data=data_json,
     )
@@ -172,19 +175,19 @@ def research(query):
 def write_content(research_material, topic):
     editor = autogen.AssistantAgent(
         name="editor",
-        system_message="You are a senior editor of an AI blogger, you will define the structure of a short blog post based on material provided by the researcher, and give it to the writer to write the blog post",
+        system_message=f"You are a senior editor of a {blog_topic} blogger, you will define the structure of a short blog post based on material provided by the researcher, and give it to the writer to write the blog post",
         llm_config={"config_list": config_list},
     )
 
     writer = autogen.AssistantAgent(
         name="writer",
-        system_message="You are a professional AI blogger who is writing a blog post about AI, you will write a short blog post based on the structured provided by the editor, and feedback from reviewer; After 2 rounds of content iteration, add TERMINATE to the end of the message",
+        system_message=f"You are a professional {blog_topic} blogger who is writing a blog post about {blog_topic}, you will write a short blog post based on the structured provided by the editor, and feedback from reviewer; After 2 rounds of content iteration, add TERMINATE to the end of the message",
         llm_config={"config_list": config_list},
     )
 
     reviewer = autogen.AssistantAgent(
         name="reviewer",
-        system_message="You are a world class hash tech blog content critic, you will review & critic the written blog and provide feedback to writer.After 2 rounds of content iteration, add TERMINATE to the end of the message",
+        system_message=f"You are a world class {blog_topic} blog content critic, you will review & critic the written blog and provide feedback to writer. After 2 rounds of content iteration, add TERMINATE to the end of the message",
         llm_config={"config_list": config_list},
     )
 
@@ -273,5 +276,5 @@ user_proxy = autogen.UserProxyAgent(
 
 user_proxy.initiate_chat(
     writing_assistant,
-    message="write a blog about the latest news in hunter jumper horse competitions",
+    message=blog_request,
 )
