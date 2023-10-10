@@ -1,2 +1,3 @@
 .cache/
 OAI_CONFIG_LIST
+.env
