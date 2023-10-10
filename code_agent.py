@@ -33,5 +33,5 @@ manager = GroupChatManager(groupchat=groupchat, llm_config=llm_config)
 
 # start conversation
 user_proxy.initiate_chat(
-    manager, message="Build a classic and basic pong game with two players in python"
+    manager, message="Build a classic and basic snake game in python"
 )
